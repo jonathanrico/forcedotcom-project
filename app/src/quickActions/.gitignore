@@ -1,0 +1,22 @@
+# Ignore everything in this directory
+*
+# Except these files
+!.gitignore
+!.app
+!.cls
+!.component
+!.dashboard
+!.xml
+!.labels
+!.layout
+!.object
+!.objectTranslation
+!.page
+!.permissionset
+!.quickAction
+!.report
+!.reportType
+!.resource
+!.tab
+!.trigger
+!.workflow
