@@ -1,7 +1,7 @@
-liv
+Sample App
 ===
 
-###Residential Portal Force.com App
+###Sample App Description
 
 ---
 
