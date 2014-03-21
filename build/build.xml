@@ -3,7 +3,7 @@
 	<!-- Properties -->
 	<property file="${build_props}"/>
 	<property environment="env"/>
-	<property name="desctructive.dir" value="../build/destructive"/>
+	<property name="destructive.dir" value="../build/destructive"/>
 	<property name="src.dir" value="../app/src"/>
 	<property name="staticres.src.dir" value="../static-resources/AppStaticRes"/>
 	<property name="packageVersionTag" value="&lt;packageVersions&gt;"/>
