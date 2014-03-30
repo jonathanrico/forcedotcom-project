@@ -6,58 +6,58 @@ Referenced Packages
 salesforce.schema
  
 #unfiled emails
-src/email/unfiled$public/
+app/src/email/unfiled$public/
  
 #default communities available in dev org
-src/communities/Internal Community.community
+app/src/communities/Internal Community.community
  
 #default home layouts for dev orgs
-src/homePageLayouts/DE Default.homePageLayout
+app/src/homePageLayouts/DE Default.homePageLayout
  
 #standard profiles available in dev org
-src/profiles/Admin.profile
-src/profiles/Chatter External User.profile
-src/profiles/Chatter Free User.profile
-src/profiles/Chatter Moderator User.profile
-src/profiles/ContractManager.profile
-src/profiles/Custom%3A Marketing Profile.profile
-src/profiles/Custom%3A Sales Profile.profile
-src/profiles/Custom%3A Support Profile.profile
-src/profiles/Customer Portal Manager Custom.profile
-src/profiles/Customer Portal Manager Standard.profile
-src/profiles/Force%2Ecom - App Subscription User.profile
-src/profiles/Force%2Ecom - Free User.profile
-src/profiles/Gold Partner User.profile
-src/profiles/HighVolumePortal.profile
-src/profiles/MarketingProfile.profile
-src/profiles/Partner App Subscription.profile
-src/profiles/PlatformPortal.profile
-src/profiles/ReadOnly.profile
-src/profiles/Silver Partner User.profile
-src/profiles/SolutionManager.profile
-src/profiles/Standard.profile
-src/profiles/StandardAul.profile
+app/src/profiles/Admin.profile
+app/src/profiles/Chatter External User.profile
+app/src/profiles/Chatter Free User.profile
+app/src/profiles/Chatter Moderator User.profile
+app/src/profiles/ContractManager.profile
+app/src/profiles/Custom%3A Marketing Profile.profile
+app/src/profiles/Custom%3A Sales Profile.profile
+app/src/profiles/Custom%3A Support Profile.profile
+app/src/profiles/Customer Portal Manager Custom.profile
+app/src/profiles/Customer Portal Manager Standard.profile
+app/src/profiles/Force%2Ecom - App Subscription User.profile
+app/src/profiles/Force%2Ecom - Free User.profile
+app/src/profiles/Gold Partner User.profile
+app/src/profiles/HighVolumePortal.profile
+app/src/profiles/MarketingProfile.profile
+app/src/profiles/Partner App Subscription.profile
+app/src/profiles/PlatformPortal.profile
+app/src/profiles/ReadOnly.profile
+app/src/profiles/Silver Partner User.profile
+app/src/profiles/SolutionManager.profile
+app/src/profiles/Standard.profile
+app/src/profiles/StandardAul.profile
  
 #remote site settings from dev org
-src/remoteSiteSettings/ApexDevNet.remoteSite
+app/src/remoteSiteSettings/ApexDevNet.remoteSite
 
 #standard roles from dev org
-src/roles/CEO.role
-src/roles/CFO.role
-src/roles/COO.role
-src/roles/ChannelSalesTeam.role
-src/roles/CustomerSupportInternational.role
-src/roles/CustomerSupportNorthAmerica.role
-src/roles/DirectorChannelSales.role
-src/roles/DirectorDirectSales.role
-src/roles/EasternSalesTeam.role
-src/roles/InstallationRepairServices.role
-src/roles/MarketingTeam.role
-src/roles/SVPCustomerServiceSupport.role
-src/roles/SVPHumanResources.role
-src/roles/SVPSalesMarketing.role
-src/roles/VPInternationalSales.role
-src/roles/VPMarketing.role
-src/roles/VPNorthAmericanSales.role
-src/roles/WesternSalesTeam.role
+app/src/roles/CEO.role
+app/src/roles/CFO.role
+app/src/roles/COO.role
+app/src/roles/ChannelSalesTeam.role
+app/src/roles/CustomerSupportInternational.role
+app/src/roles/CustomerSupportNorthAmerica.role
+app/src/roles/DirectorChannelSales.role
+app/src/roles/DirectorDirectSales.role
+app/src/roles/EasternSalesTeam.role
+app/src/roles/InstallationRepairServices.role
+app/src/roles/MarketingTeam.role
+app/src/roles/SVPCustomerServiceSupport.role
+app/src/roles/SVPHumanResources.role
+app/src/roles/SVPSalesMarketing.role
+app/src/roles/VPInternationalSales.role
+app/src/roles/VPMarketing.role
+app/src/roles/VPNorthAmericanSales.role
+app/src/roles/WesternSalesTeam.role
  
