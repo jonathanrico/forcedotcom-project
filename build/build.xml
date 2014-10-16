@@ -1,38 +1,25 @@
 <project name="App build file" default="deploy" basedir="." xmlns:sf="antlib:com.salesforce">
 
 	<!-- Properties -->
-	<property file="${build_props}"/>
 	<property environment="env"/>
+	<property name="build_props" value="sfdc-build.properties"/>
+	<property file="${build_props}"/>
 	<property name="destructive.dir" value="../build/destructive"/>
 	<property name="src.dir" value="../app/src"/>
-	<property name="staticres.src.dir" value="../static-resources/AppStaticRes"/>
+	<property name="staticres.src.dir" value="../static-resources"/>
+	<property name="app.deploy.tmp.dir" value="../build/tmp/src"/>
 	<property name="packageVersionTag" value="&lt;packageVersions&gt;"/>
 
 	<!-- Set default value in property if not present -->
-	<property name="sf.target.guestLicense" value="Guest User License" />
+	<property name="checkOnly" value="true" />
+	<property name ="runAllTests" value="true" />
+	<property name ="sf.package.apiVersion" value="32.0" />
 
-	<!-- define tasks from antcontrib -->
-	<!-- see http://ant-contrib.sourceforge.net/tasks/tasks/index.html -->
-	<taskdef resource="net/sf/antcontrib/antlib.xml">
-		<classpath>
-			<pathelement location="../build/tools/ant-contrib-1.0b3.jar"/>
-		</classpath>
-	</taskdef>
+	<!-- Ant doesn't like < in replace tokens or values so set a property with < via cdata for reuse later -->
+	<property name="lt"><![CDATA[<]]></property>
 
-	<!-- define tasks from sf -->
-	<taskdef uri="antlib:com.salesforce">
-		<classpath>
-			<pathelement location="../build/tools/ant-salesforce.jar"/>
-		</classpath>
-	</taskdef>
-
-	<!-- define tasks from xmltask -->
-	<!-- see http://www.oopsconsultancy.com/software/xmltask/#usage.xmltask -->
-	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
-		<classpath>
-			<pathelement location="../build/tools/xmltask.jar"/>
-		</classpath>
-	</taskdef>
+	<!-- Import additional macros-->
+    <import file="${basedir}/tools/ant-salesforce.xml"/>
 
 	<!-- Output timestamp -->
 	<target name="timestamp">
@@ -94,41 +81,31 @@
 	<!-- Update metadata info that changes from one environment to another-->
 	<target name="updateMetadata">
 		<echo message="Updating metadata..." />
-		<!-- SAMPLE Tasks to replace profile specific user license settings -->
-		<!--
-		<xmltask source="${src.dir}/dashboards/APP_Dashboards/DASHBOARDNAME.dashboard" dest="${src.dir}/dashboards/APP_Dashboards/DASHBOARDNAME.dashboard">
+		<!-- Task to replace profile specific user license settings -->
+		<!-- <xmltask source="${src.dir}/dashboards/DASHBOARD_FOLDER/DASHBOARD_NAME.dashboard" dest="${src.dir}/dashboards/DASHBOARD_FOLDER/DASHBOARD_NAME.dashboard">
 			<replace path="/*[local-name()='Dashboard']/*[local-name()='runningUser']/text()" withText="${sf.target.username}"/>
-		</xmltask>
-		<xmltask source="${src.dir}/dashboards/APP_Dashboards/DASHBOARDNAME.dashboard" dest="${src.dir}/dashboards/APP_Dashboards/DASHBOARDNAME.dashboard">
-		  <replace path="/*[local-name()='Dashboard']/*[local-name()='runningUser']/text()" withText="${sf.target.username}"/>
-		</xmltask>
-		-->
+		</xmltask> -->
 	</target>
-	
+
 	<target name="revertMetadataChanges">
 		<echo message="Reverting metadata changes..." />
-		<!-- Sample Task to replace profile specific user license settings back to template-->
-		<!--
-		<xmltask source="${src.dir}/dashboards/APP_Dashboards/DASHBOARDNAME.dashboard" dest="${src.dir}/dashboards/APP_Dashboards/DASHBOARDNAME.dashboard">
+		<!-- Task to replace profile specific user license settings -->
+		<!-- <xmltask source="${src.dir}/dashboards/DASHBOARD_FOLDER/DASHBOARD_NAME.dashboard" dest="${src.dir}/dashboards/DASHBOARD_FOLDER/DASHBOARD_NAME.dashboard">
 			<replace path="/*[local-name()='Dashboard']/*[local-name()='runningUser']/text()" withText="{{RUNNING_USER}}"/>
-		</xmltask>
-		<xmltask source="${src.dir}/dashboards/APP_Dashboards/DASHBOARDNAME.dashboard" dest="${src.dir}/dashboards/APP_Dashboards/DASHBOARDNAME.dashboard">
-		  <replace path="/*[local-name()='Dashboard']/*[local-name()='runningUser']/text()" withText="{{RUNNING_USER}}"/>
-		</xmltask>
-	-->
+		</xmltask> -->
 	</target>
-	
+
 	<!-- Deploy the unpackaged set of metadata retrieved with retrieveUnpackaged -->
-	<target name="deploy" depends="updateMetadata,create-static-res,resolvePasswordForTargetEnv">
-		<sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" 
+	<target name="deploy" depends="runTargetValidations,updateMetadata,create-static-res,resolvePasswordForTargetEnv">
+		<sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
         deployRoot="${src.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
 		</sf:deploy>
 		<antcall target="revertMetadataChanges"/>
 	</target>
 
 	<!-- Only Deploy destructive changes -->
-	<target name="deploy-destructive" depends="timestamp,resolvePasswordForTargetEnv">
-		<sf:deploy username="${sf.target.username}" password="${targetPassword}" serverurl="${sf.target.serverurl}" 
+	<target name="deploy-destructive" depends="runTargetValidations,timestamp,resolvePasswordForTargetEnv">
+		<sf:deploy username="${sf.target.username}" password="${targetPassword}" serverurl="${sf.target.serverurl}"
         deployRoot="${destructive.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
 		</sf:deploy>
 	</target>
@@ -139,18 +116,114 @@
 		<antcall target="deploy-destructive"/>
 	</target>
 
-	<!-- Deploy static resource -->
+	<!-- Deploy Static Resources Only-->
 	<target name="deploy-static-res" depends="create-static-res">
-		<copy file="${src.dir}/staticresources/AppStaticRes.resource" todir="${staticres.deploy.temp.dir}/staticresources" />
-		<sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" 
-        deployRoot="${staticres.deploy.temp.dir}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
+		<deploy-subset-package>
+			<ss-elements>
+				<copy todir="${app.deploy.tmp.dir}/staticresources">
+					<fileset dir="${src.dir}/staticresources"/>
+				</copy>
+				<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>*</members><name>StaticResource</name></types>]]></echo>
+			</ss-elements>
+		</deploy-subset-package>
+	</target>
+
+	<!-- Deploy Apex Only-->
+	<target name="deploy-apex">
+		<deploy-subset-package>
+			<ss-elements>
+				<copy todir="${app.deploy.tmp.dir}/classes">
+					<fileset dir="${src.dir}/classes"/>
+				</copy>
+				<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>*</members><name>ApexClass</name></types>]]></echo>
+				<copy todir="${app.deploy.tmp.dir}/triggers">
+					<fileset dir="${src.dir}/triggers"/>
+				</copy>
+				<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>*</members><name>ApexTrigger</name></types>]]></echo>
+			</ss-elements>
+		</deploy-subset-package>
+	</target>
+
+	<!-- Deploy Visualforce Only-->
+	<target name="deploy-visualforce">
+		<deploy-subset-package>
+			<ss-elements>
+				<copy todir="${app.deploy.tmp.dir}/pages">
+					<fileset dir="${src.dir}/pages"/>
+				</copy>
+				<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>*</members><name>ApexPage</name></types>]]></echo>
+			</ss-elements>
+		</deploy-subset-package>
+	</target>
+
+	<!-- Deploy Single File -->
+	<target name="deploy-single-file">
+		<deploy-subset-package>
+			<ss-elements>
+				<echo message="${deploy.single.folderName} / ${deploy.single.fileName} / ${deploy.single.metadataType}" />
+				<copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/">
+					<fileset dir="${src.dir}/${deploy.single.folderName}" >
+						<include name="${deploy.single.fileName}.*" />
+						<include name="${deploy.single.fileName}.*-meta.xml" />
+					</fileset>
+				</copy>
+				<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.fileName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
+			</ss-elements>
+		</deploy-subset-package>
+	</target>
+
+	<!-- Deploy metadata from the tmp directory -->
+	<target name="deploy-subset" depends="runTargetValidations,checkMetaHasPackageVersions">
+		<sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
+				deployRoot="${app.deploy.tmp.dir}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="${runAllTests}">
 		</sf:deploy>
 	</target>
 
 	<!-- Create static resource zip file from exploded directory structure -->
 	<target name="create-static-res" depends="checkMetaHasPackageVersions">
-		<delete file="${src.dir}/staticresources/AppStaticRes.resource"/>
-		<zip destfile="${src.dir}/staticresources/AppStaticRes.resource" basedir="${staticres.src.dir}" />
+		<dirset id="dist.contents" dir="../static-resources" includes="static-resources *"/>
+		<property name="prop.dist.contents" refid="dist.contents"/>
+		<for list="${prop.dist.contents}" delimiter=";" param = "val">
+			<sequential>
+				<echo message = "Processing @{val} static resource ..."/>
+				<delete file="${src.dir}/staticresources/@{val}.resource"/>
+				<zip destfile="${src.dir}/staticresources/@{val}.resource" basedir="${staticres.src.dir}/@{val}" />
+			</sequential>
+		</for>
+	</target>
+
+	<!-- Run target validations to prevent unintended deployments to production -->
+	<target name="runTargetValidations" >
+		<if>
+			<isset property="sf.target.prodOrg.ids"/>
+			<then>
+				<executeSOQLSingle username="${sf.target.username}" password="${sf.target.password}">Select Id from Organization</executeSOQLSingle>
+				<echo message="Target Org Id : ${soqlRecord.Id}"/>
+				<condition property="is-prod-org">
+				    <matches pattern="(${sf.target.prodOrg.ids})" string="${soqlRecord.Id}"/>
+				</condition>
+				<if>
+					<equals arg1="${is-prod-org}" arg2="true"/>
+					<then>
+						<input
+						    message="You're building against a production org. Do you wish to continue?"
+						    validargs="y,n"
+						    addproperty="do.delete"
+						  />
+						  <condition property="do.abort">
+						    <equals arg1="n" arg2="${do.delete}"/>
+						  </condition>
+						  <fail if="do.abort">Build aborted by user.</fail>
+					</then>
+					<else>
+						<echo message="Ok to continue with deployment..." />
+					</else>
+				</if>
+			</then>
+			<else>
+				<echo message="Ok to continue with deployment, no production checks have been defined..." />
+			</else>
+		</if>
 	</target>
 
 </project>
