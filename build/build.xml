@@ -226,4 +226,9 @@
 		</if>
 	</target>
 
+	<!-- Retrieve the contents listed in the file app/package.xml into the app directory -->
+	<target name="retrieveUnpackaged">
+	   <sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${src.dir}/package.xml"/>
+	</target>
+
 </project>
