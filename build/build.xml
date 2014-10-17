@@ -12,8 +12,8 @@
 
 	<!-- Set default value in property if not present -->
 	<property name="checkOnly" value="true" />
-	<property name ="runAllTests" value="true" />
-	<property name ="sf.package.apiVersion" value="32.0" />
+	<property name="runAllTests" value="true" />
+	<property name="sf.package.apiVersion" value="32.0" />
 
 	<!-- Ant doesn't like < in replace tokens or values so set a property with < via cdata for reuse later -->
 	<property name="lt"><![CDATA[<]]></property>
@@ -167,14 +167,14 @@
 						<if>
 							<equals arg1="${deploy.single.metadataType}" arg2="AuraDefinitionBundle"/>
 							<then>
-								<echo message = "Processing aura bundle..."/>
+								<echo message="Processing aura bundle..."/>
 								<copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}">
 									<fileset dir="${src.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}"/>
 								</copy>
 								<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.subFolderName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
 							</then>
 							<else>
-								<echo message = "Processing sub-folders..."/>
+								<echo message="Processing sub-folders..."/>
 								<copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}">
 									<fileset dir="${src.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}" >
 										<include name="${deploy.single.fileName}.*" />
@@ -199,6 +199,34 @@
 		</deploy-subset-package>
 	</target>
 
+	<!-- Retrieve Single File -->
+	<target name="retrieve-single-file">
+		<retrieve-unpackaged-subset-package>
+			<ss-elements>
+				<echo message="${retrieve.single.folderName} / ${retrieve.single.subFolderName} / ${retrieve.single.fileName} / ${retrieve.single.metadataType}" />
+				<if>
+					<isset property="retrieve.single.subFolderName"/>
+					<then>
+						<if>
+							<equals arg1="${retrieve.single.metadataType}" arg2="AuraDefinitionBundle"/>
+							<then>
+								<echo message="Processing aura bundle..."/>
+								<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${retrieve.single.subFolderName}</members><name>${retrieve.single.metadataType}</name></types>]]></echo>
+							</then>
+							<else>
+								<echo message="Processing sub-folders..."/>
+								<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${retrieve.single.subFolderName}</members><members>${retrieve.single.subFolderName}/${retrieve.single.fileName}</members><name>${retrieve.single.metadataType}</name></types>]]></echo>
+							</else>
+						</if>
+					</then>
+					<else>
+						<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${retrieve.single.fileName}</members><name>${retrieve.single.metadataType}</name></types>]]></echo>
+					</else>
+				</if>
+			</ss-elements>
+		</retrieve-unpackaged-subset-package>
+	</target>
+
 	<!-- Deploy metadata from the tmp directory -->
 	<target name="deploy-subset" depends="runTargetValidations,checkMetaHasPackageVersions">
 		<sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
@@ -210,9 +238,9 @@
 	<target name="create-static-res" depends="checkMetaHasPackageVersions">
 		<dirset id="dist.contents" dir="../static-resources" includes="static-resources *"/>
 		<property name="prop.dist.contents" refid="dist.contents"/>
-		<for list="${prop.dist.contents}" delimiter=";" param = "val">
+		<for list="${prop.dist.contents}" delimiter=";" param="val">
 			<sequential>
-				<echo message = "Processing @{val} static resource ..."/>
+				<echo message="Processing @{val} static resource ..."/>
 				<delete file="${src.dir}/staticresources/@{val}.resource"/>
 				<zip destfile="${src.dir}/staticresources/@{val}.resource" basedir="${staticres.src.dir}/@{val}" />
 			</sequential>
@@ -256,6 +284,11 @@
 	<!-- Retrieve the contents listed in the file app/package.xml into the app directory -->
 	<target name="retrieve-unpackaged">
 	   <sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${src.dir}/package.xml"/>
+	</target>
+
+	<!-- Retrieve metadata from the tmp directory -->
+	<target name="retrieve-unpackaged-subset">
+		<sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${app.deploy.tmp.dir}/package.xml" />
 	</target>
 
 </project>

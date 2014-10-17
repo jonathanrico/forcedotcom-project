@@ -164,6 +164,24 @@
 		</sequential>
 	</macrodef>
 
+	<!-- Builds a tmp package based on specific attributes for retrieval purposes-->
+	<macrodef name="retrieve-unpackaged-subset-package">
+		<element name="ss-elements"/>
+		<sequential>
+			<delete dir="${app.deploy.tmp.dir}"/>
+			<copy file="${src.dir}/package.xml" tofile="${app.deploy.tmp.dir}/app-package.xml" overwrite="true" />
+			<!-- Begin the package xml definition -->
+			<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<Package xmlns="http://soap.sforce.com/2006/04/metadata">]]></echo>
+			<!-- Add metadata to package xml from subset elements -->
+			<ss-elements/>
+			<!-- End the package xml definition -->
+			<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<version>${sf.package.apiVersion}</version></Package>]]></echo>
+			<antcall target="retrieve-unpackaged-subset"/>
+			<copy file="${app.deploy.tmp.dir}/app-package.xml" tofile="${src.dir}/package.xml" overwrite="true"/>
+			<delete dir="${app.deploy.tmp.dir}"/>
+		</sequential>
+	</macrodef>
+
 	<!-- Returns a single record from the specified SOQL Query -->
 	<macrodef name="executeSOQLSingle" description="Returns a single record from a SOQL Query">
 		<attribute name="username" description="Salesforce user name"/>
