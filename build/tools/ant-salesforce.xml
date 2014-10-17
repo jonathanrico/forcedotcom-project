@@ -29,15 +29,18 @@
 	<macrodef name="executeApex" description="Provides access to the Salesforce Tooling REST API ExecuteAnnoynmous resource">
 		<attribute name="username" description="Salesforce user name"/>
 		<attribute name="password" description="Salesforce password"/>
-		<attribute name="instance" description="Salesforce instance" default="na15"/>
+		<attribute name="serverurl" description="Server url"/>
 		<attribute name="resultprefix" description="Property name prefix used for properties containing response data" default="executeAnonymousResponse"/>
 		<attribute name="failonerror" description="If the execute fails then fail the Ant script" default="true"/>
 		<text name="apexcode"/>
 		<sequential>
 			<!-- Login -->
-			<login username="@{username}" password="@{password}" serverurl="serverUrl" sessionId="sessionId" domainurl="domainUrl"/>
+			<login username="@{username}" password="@{password}" serverurl="@{serverurl}" sessionId="sessionId" domainurl="domainUrl"/>
+
+			<echo message="Target Domain URL : ${domainUrl}"/>
+
 			<!-- Execute Apex via Tooling API /executeAnonymous resource -->
-		    <http url="https://@{instance}.salesforce.com/services/data/v29.0/tooling/executeAnonymous" method="GET" entityProperty="executeAnonymousResponse" statusProperty="loginResponseStatus" printrequestheaders="false" printresponseheaders="false">
+		    <http url="https://${domainUrl}/services/data/v32.0/tooling/executeAnonymous" method="GET" entityProperty="executeAnonymousResponse" statusProperty="loginResponseStatus" printrequestheaders="false" printresponseheaders="false">
 		    	<headers>
 		    		<header name="Authorization" value="Bearer ${sessionId}"/>
 		    	</headers>
@@ -77,12 +80,12 @@
 	<macrodef name="login">
 		<attribute name="username" description="Salesforce user name."/>
 		<attribute name="password" description="Salesforce password."/>
-		<attribute name="serverurl" description="Server Url property."/>
+		<attribute name="serverurl" description="Server Url property." default="https://login.salesforce.com"/>
 		<attribute name="sessionId" description="Session Id property."/>
 		<attribute name="domainurl" description="Domain URL property" />
 		<sequential>
 			<!-- Obtain Session Id via Login SOAP service -->
-		    <http url="https://login.salesforce.com/services/Soap/c/29.0" method="POST" failonunexpected="false" entityProperty="loginResponse" statusProperty="loginResponseStatus" >
+		    <http url="@{serverurl}/services/Soap/c/32.0" method="POST" failonunexpected="false" entityProperty="loginResponse" statusProperty="loginResponseStatus" >
 		    	<headers>
 		    		<header name="Content-Type" value="text/xml"/>
 		    		<header name="SOAPAction" value="login"/>
@@ -111,10 +114,10 @@
 					<!-- Parse sessionId and serverUrl -->
 					<xmltask sourcebuffer="loginResponseBuffer" failWithoutMatch="true">
 						<copy path="/*[local-name()='Envelope']/*[local-name()='Body']/:loginResponse/:result/:sessionId/text()" property="@{sessionId}"/>
-						<copy path="/*[local-name()='Envelope']/*[local-name()='Body']/:loginResponse/:result/:serverUrl/text()" property="@{serverUrl}"/>
+						<copy path="/*[local-name()='Envelope']/*[local-name()='Body']/:loginResponse/:result/:serverUrl/text()" property="domainurl"/>
 					</xmltask>
-					<propertyregex property="@{domainURL}"
-		              input="${serverUrl}"
+					<propertyregex property="@{domainurl}"
+		              input="${domainurl}"
 		              regexp="(https)://([^/\r\n]+)(/[^\r\n]*)?"
 		              select="\2"
 		              casesensitive="false" />
@@ -165,6 +168,7 @@
 	<macrodef name="executeSOQLSingle" description="Returns a single record from a SOQL Query">
 		<attribute name="username" description="Salesforce user name"/>
 		<attribute name="password" description="Salesforce password"/>
+		<attribute name="serverurl" description="Server url"/>
 		<attribute name="resultprefix" description="Property name prefix used for properties containing response data" default="soqlRecord"/>
 		<attribute name="failonerror" description="If the execute fails then fail the Ant script" default="true"/>
 		<text name="soqlQuery"/>
@@ -175,12 +179,13 @@
         		logger.setMessageOutputLevel(1);
 			</script>
 			<!-- Login -->
-			<login username="@{username}" password="@{password}" serverurl="serverUrl" sessionId="sessionId" domainurl="domainUrl"/>
+			<echo message="Sever URL : @{serverurl}"/>
+			<login username="@{username}" password="@{password}" serverurl="@{serverurl}" sessionId="sessionId" domainurl="domainUrl"/>
 
 			<echo message="Target Domain URL : ${domainUrl}"/>
 
 			<!-- Execute Apex via Tooling API /executeAnonymous resource -->
-		    <http url="https://${domainUrl}/services/data/v29.0/query" method="GET" entityProperty="soqlResult" statusProperty="loginResponseStatus" failonunexpected="false" printrequestheaders="false" printresponseheaders="false">
+		    <http url="https://${domainUrl}/services/data/v32.0/query" method="GET" entityProperty="soqlResult" statusProperty="loginResponseStatus" failonunexpected="false" printrequestheaders="false" printresponseheaders="false">
 		    	<headers>
 		    		<header name="Authorization" value="Bearer ${sessionId}"/>
 		    	</headers>

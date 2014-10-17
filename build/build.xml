@@ -224,7 +224,7 @@
 		<if>
 			<isset property="sf.target.prodOrg.ids"/>
 			<then>
-				<executeSOQLSingle username="${sf.target.username}" password="${sf.target.password}">Select Id from Organization</executeSOQLSingle>
+				<executeSOQLSingle username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}">Select Id from Organization</executeSOQLSingle>
 				<echo message="Target Org Id : ${soqlRecord.Id}"/>
 				<condition property="is-prod-org">
 				    <matches pattern="(${sf.target.prodOrg.ids})" string="${soqlRecord.Id}"/>
