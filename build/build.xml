@@ -160,14 +160,41 @@
 	<target name="deploy-single-file">
 		<deploy-subset-package>
 			<ss-elements>
-				<echo message="${deploy.single.folderName} / ${deploy.single.fileName} / ${deploy.single.metadataType}" />
-				<copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/">
-					<fileset dir="${src.dir}/${deploy.single.folderName}" >
-						<include name="${deploy.single.fileName}.*" />
-						<include name="${deploy.single.fileName}.*-meta.xml" />
-					</fileset>
-				</copy>
-				<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.fileName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
+				<echo message="${deploy.single.folderName} / ${deploy.single.subFolderName} / ${deploy.single.fileName} / ${deploy.single.metadataType}" />
+				<if>
+					<isset property="deploy.single.subFolderName"/>
+					<then>
+						<if>
+							<equals arg1="${deploy.single.metadataType}" arg2="AuraDefinitionBundle"/>
+							<then>
+								<echo message = "Processing aura bundle..."/>
+								<copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}">
+									<fileset dir="${src.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}"/>
+								</copy>
+								<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.subFolderName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
+							</then>
+							<else>
+								<echo message = "Processing sub-folders..."/>
+								<copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}">
+									<fileset dir="${src.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}" >
+										<include name="${deploy.single.fileName}.*" />
+										<include name="${deploy.single.fileName}.*-meta.xml" />
+									</fileset>
+								</copy>
+								<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.subFolderName}</members><members>${deploy.single.subFolderName}/${deploy.single.fileName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
+							</else>
+						</if>
+					</then>
+					<else>
+						<copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/">
+							<fileset dir="${src.dir}/${deploy.single.folderName}" >
+								<include name="${deploy.single.fileName}.*" />
+								<include name="${deploy.single.fileName}.*-meta.xml" />
+							</fileset>
+						</copy>
+						<echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.fileName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
+					</else>
+				</if>
 			</ss-elements>
 		</deploy-subset-package>
 	</target>
