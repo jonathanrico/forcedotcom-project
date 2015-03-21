@@ -3,43 +3,25 @@
 Referenced Packages
 .settings
 .project
+.externalToolBuilders/
 salesforce.schema
- 
+build/node_modules/
+build/tmp/
+npm-debug.log
+
+#ignore credential files
+sfdc-build.properties
+credentials.json
+credentials-validation.json
+
 #unfiled emails
-app/src/email/unfiled$public/
- 
+app/src/email/unfiled$public
+
 #default communities available in dev org
 app/src/communities/Internal Community.community
- 
+
 #default home layouts for dev orgs
 app/src/homePageLayouts/DE Default.homePageLayout
- 
-#standard profiles available in dev org
-app/src/profiles/Admin.profile
-app/src/profiles/Chatter External User.profile
-app/src/profiles/Chatter Free User.profile
-app/src/profiles/Chatter Moderator User.profile
-app/src/profiles/ContractManager.profile
-app/src/profiles/Custom%3A Marketing Profile.profile
-app/src/profiles/Custom%3A Sales Profile.profile
-app/src/profiles/Custom%3A Support Profile.profile
-app/src/profiles/Customer Portal Manager Custom.profile
-app/src/profiles/Customer Portal Manager Standard.profile
-app/src/profiles/Force%2Ecom - App Subscription User.profile
-app/src/profiles/Force%2Ecom - Free User.profile
-app/src/profiles/Gold Partner User.profile
-app/src/profiles/HighVolumePortal.profile
-app/src/profiles/MarketingProfile.profile
-app/src/profiles/Partner App Subscription.profile
-app/src/profiles/PlatformPortal.profile
-app/src/profiles/ReadOnly.profile
-app/src/profiles/Silver Partner User.profile
-app/src/profiles/SolutionManager.profile
-app/src/profiles/Standard.profile
-app/src/profiles/StandardAul.profile
- 
-#remote site settings from dev org
-app/src/remoteSiteSettings/ApexDevNet.remoteSite
 
 #standard roles from dev org
 app/src/roles/CEO.role
@@ -60,4 +42,26 @@ app/src/roles/VPInternationalSales.role
 app/src/roles/VPMarketing.role
 app/src/roles/VPNorthAmericanSales.role
 app/src/roles/WesternSalesTeam.role
- 
+
+#standard assignment rules
+app/src/assignmentRules/Case.assignmentRules
+app/src/assignmentRules/Lead.assignmentRules
+
+#standard sharing rules
+app/src/opportunitySharingRules/Opportunity.sharingRules
+app/src/leadSharingRules/Lead.sharingRules
+app/src/accountSharingRules/Account.sharingRules
+app/src/campaignSharingRules/Campaign.sharingRules
+app/src/caseSharingRules/Case.sharingRules
+app/src/contactSharingRules/Contact.sharingRules
+
+#settings
+app/src/settings/Case.settings
+app/src/settings/ChatterAnswers.settings
+app/src/settings/Company.settings
+app/src/settings/Contract.settings
+app/src/settings/Entitlement.settings
+app/src/settings/Knowledge.settings
+app/src/settings/Mobile.settings
+app/src/settings/Security.settings
+#app/src/settings/Ideas.settings
