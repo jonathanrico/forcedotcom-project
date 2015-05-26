@@ -3,6 +3,8 @@ Sample App
 
 ###Sample App Description
 
+Description goes here..
+
 ---
 ###Developers :
 
@@ -23,6 +25,7 @@ Sample App
 1. Make sure ant is installed in your local box
 2. Update your credentials by making a copy of the sample-sfdc-build.properties file and renaming it to "sfdc-build.properties"
 3. Retrieve metadata by going to the build folder `cd build` and running the retrieve target `ant retrieve`
+4. Remove any of the metadata folders that are not being used by your project
 
 #### How to deploy the application using Ant :
 
@@ -30,4 +33,8 @@ Sample App
    **NOTE: If you're building against a Sandbox or Production environment with Sites enabled, set the "guestLicense" property to empty**
 2. Navigate to the build folder using the terminal or command prompt
 3. If you're using **OS X** run the following command : `sh build.sh`
-5. If you want to run the ant target directly use the following command : `ant deploy -DrunAllTests=false -DcheckOnly=false
+4. If you want to run the ant target directly use the following command : `ant deploy -DrunAllTests=false -DcheckOnly=false
+
+#### How to create new files :
+
+For now you'll have to create them in Salesforce and then run the retrieve target or create them manually in your editor.
