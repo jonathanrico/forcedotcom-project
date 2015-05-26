@@ -284,6 +284,11 @@
         </if>
     </target>
 
+    <!-- Retrieve unpackaged metadata -->
+    <target name="retrieve">
+        <antcall target="retrieve-unpackaged"/>
+    </target>
+
     <!-- Retrieve the contents listed in the file app/package.xml into the app directory -->
     <target name="retrieve-unpackaged">
         <echo message="Retrieving Unpackaged : ${sf.target.username} ..."/>

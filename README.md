@@ -22,7 +22,7 @@ Sample App
 
 1. Make sure ant is installed in your local box
 2. Update your credentials by making a copy of the sample-sfdc-build.properties file and renaming it to "sfdc-build.properties"
-3. Run the retrieve target with `ant retrieve`
+3. Retrieve metadata by going to the build folder `cd build` and running the retrieve target `ant retrieve`
 
 #### How to deploy the application using Ant :
 
