@@ -41,7 +41,7 @@
         <name>CustomTab</name>
     </types>
     <types>
-		<members>*</members>
+    <members>*</members>
         <name>Layout</name>
     </types>
     <types>
