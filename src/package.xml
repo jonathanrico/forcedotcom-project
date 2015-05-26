@@ -60,13 +60,13 @@
         <members>*</members>
         <name>StaticResource</name>
     </types>
+    <!-- Add components and uncomment -->
+    <!--
     <types>
         <members>Sample_Documents</members>
         <members>Sample_Documents/logo.png</members>
         <name>Document</name>
     </types>
-    <!-- Add components and uncomment -->
-    <!--
     <types>
         <members>APP_DASHBOARDS_FOLDER</members>
         <members>APP_DASHBOARDS_FOLDER/DASHBOARD_NAME</members>

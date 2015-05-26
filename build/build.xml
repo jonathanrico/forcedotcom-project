@@ -1,4 +1,4 @@
-<project name="App build file" default="deploy" basedir="." xmlns:sf="antlib:com.salesforce">
+<project name="My App build file" default="deploy" basedir="." xmlns:sf="antlib:com.salesforce">
 
     <!-- Properties -->
     <property environment="env"/>
@@ -13,7 +13,7 @@
     <!-- Set default value in property if not present -->
     <property name="checkOnly" value="true" />
     <property name="runAllTests" value="true" />
-    <property name="sf.package.apiVersion" value="32.0" />
+    <property name="sf.package.apiVersion" value="33.0" />
 
     <!-- Ant doesn't like < in replace tokens or values so set a property with < via cdata for reuse later -->
     <property name="lt"><![CDATA[<]]></property>
@@ -97,6 +97,7 @@
 
     <!-- Deploy the unpackaged set of metadata retrieved with retrieveUnpackaged -->
     <target name="deploy" depends="runTargetValidations,updateMetadata,create-static-res,resolvePasswordForTargetEnv">
+        <echo message="Deploying : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
         deployRoot="${src.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
         </sf:deploy>
@@ -105,6 +106,7 @@
 
     <!-- Only Deploy destructive changes -->
     <target name="deploy-destructive" depends="runTargetValidations,timestamp,resolvePasswordForTargetEnv">
+        <echo message="Deploying Destructive : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${targetPassword}" serverurl="${sf.target.serverurl}"
         deployRoot="${destructive.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
         </sf:deploy>
@@ -229,6 +231,7 @@
 
     <!-- Deploy metadata from the tmp directory -->
     <target name="deploy-subset" depends="runTargetValidations,checkMetaHasPackageVersions">
+        <echo message="Subset Deployment : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
                 deployRoot="${app.deploy.tmp.dir}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="${runAllTests}">
         </sf:deploy>
@@ -283,11 +286,13 @@
 
     <!-- Retrieve the contents listed in the file app/package.xml into the app directory -->
     <target name="retrieve-unpackaged">
-       <sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${src.dir}/package.xml"/>
+        <echo message="Retrieving Unpackaged : ${sf.target.username} ..."/>
+        <sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${src.dir}/package.xml"/>
     </target>
 
     <!-- Retrieve metadata from the tmp directory -->
     <target name="retrieve-unpackaged-subset">
+        <echo message="Retrieving Unpackaged Subset : ${sf.target.username} ..."/>
         <sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${app.deploy.tmp.dir}/package.xml" />
     </target>
 
