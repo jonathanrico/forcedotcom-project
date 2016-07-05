@@ -229,6 +229,24 @@
         </retrieve-unpackaged-subset-package>
     </target>
 
+    <!-- Deploy several files -->
+    <target name="deploy-several-files">
+        <deploy-subset-package>
+            <ss-elements>
+                <several-files-script optype="deploy" />
+            </ss-elements>
+        </deploy-subset-package>
+    </target>
+
+    <!-- Retrieve several files -->
+    <target name="retrieve-several-files">
+        <retrieve-unpackaged-subset-package>
+            <ss-elements>
+                <several-files-script optype="retrieve" />
+            </ss-elements>
+        </retrieve-unpackaged-subset-package>
+    </target>
+
     <!-- Deploy metadata from the tmp directory -->
     <target name="deploy-subset" depends="runTargetValidations,checkMetaHasPackageVersions">
         <echo message="Subset Deployment : ${sf.target.username} ..."/>
@@ -300,5 +318,104 @@
         <echo message="Retrieving Unpackaged Subset : ${sf.target.username} ..."/>
         <sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${app.deploy.tmp.dir}/package.xml" />
     </target>
+
+    <!-- Script definition for several files deploy/retrieve -->
+    <scriptdef name="several-files-script" language="javascript">
+        <attribute name="optype"/>
+        <![CDATA[
+            try {
+                load("nashorn:mozilla_compat.js");
+            } catch (e) {}
+            importClass(java.io.File);
+            function getTask(taskName) {
+                return self.getProject().createTask(taskName);
+            }
+            function getProperty(propName) {
+                return self.getProject().getProperty(propName);
+            }
+            function taskEcho(str, dirFile, nameFile){
+                var echo = getTask("echo");
+                echo.setMessage(str);
+                var instFile = null;
+                if (nameFile) {
+                    instFile = new File(dirFile, nameFile);
+                    echo.setFile(instFile);
+                    echo.setAppend(true);
+                }
+                echo.perform();
+            }
+            function writeItemToPackage(metaDataType, item, packageDir, packageName){
+                if (typeof item === 'object') {
+                    writeItemToPackage(metaDataType, item["subfld"], packageDir, packageName);
+                    item["files"].forEach(function(fileItem){
+                        writeItemToPackage(metaDataType, item["subfld"] + "/" + fileItem, packageDir, packageName);
+                    });
+                } else {
+                    taskEcho(metaDataType + " / " + item);
+                    taskEcho("<members>" + item + "</members>", packageDir, packageName);
+                }
+            }
+            function writeItemsToPackage(metaDataType, items, packageDir, packageName){
+                if (items.length == 1) {
+                    writeItemToPackage(metaDataType, items[0], packageDir, packageName);
+                } else if (items.length > 1) {
+                    items.forEach(function(item) {
+                        writeItemToPackage(metaDataType, item, packageDir, packageName);
+                    });
+                }
+            }
+            function copyToDir(srcDir, toDir, fileMask){
+                var fs = project.createDataType("fileset");
+                fs.setDir(new File(srcDir));
+                if (fileMask) {
+                    fs.createInclude().setName(fileMask);
+                }
+                var taskCopy = getTask("copy");
+                taskCopy.addFileset(fs);
+                taskCopy.setTodir(new File(toDir));
+                taskCopy.perform();
+            }
+            function copySrcItemToTmp(mainDir, item, srcDir, tmpDir){
+                if (typeof item === 'object') {
+                    item["files"].forEach(function(fileItem){
+                        taskEcho("Perform files for subfolder " + mainDir + " / " + item["subfld"] + " / " + fileItem);
+                        copyToDir(
+                            srcDir + "/" + mainDir + "/" + item["subfld"],
+                            tmpDir + "/" + mainDir + "/" + item["subfld"],
+                            fileItem + ".*"
+                        );
+                    });
+                } else {
+                    if (mainDir == "aura") {
+                        taskEcho("Perform bundle files for " + mainDir + " / " + item);
+                        copyToDir(srcDir + "/" + mainDir + "/" + item, tmpDir + "/" + mainDir + "/" + item);
+                    } else {
+                        taskEcho("Perform files for " + mainDir + " / " + item);
+                        copyToDir(srcDir + "/" + mainDir, tmpDir + "/" + mainDir, item + ".*");
+                    }
+                }
+            }
+            function copySrcItemsToTmp(mainDir, items, srcDir, tmpDir){
+                if (items.length == 1) {
+                    copySrcItemToTmp(mainDir, items[0], srcDir, tmpDir);
+                } else if (items.length > 1) {
+                    items.forEach(function(item) {
+                        copySrcItemToTmp(mainDir, item, srcDir, tmpDir);
+                    });
+                }
+            }
+            tmpDir = getProperty("basedir") + "/" + getProperty("app.deploy.tmp.dir");
+            srcDir = getProperty("basedir") + "/" + getProperty("src.dir");
+            jsonParse = eval("(" + getProperty( attributes.get("optype") + ".several.json") + ")");
+            Object.keys(jsonParse).forEach(function(key) {
+                taskEcho("<types>", tmpDir, "package.xml");
+                writeItemsToPackage(key, jsonParse[key].items, tmpDir, "package.xml");
+                if( attributes.get("optype") == "deploy" ){
+                    copySrcItemsToTmp(jsonParse[key].fld, jsonParse[key].items, srcDir, tmpDir);
+                }
+                taskEcho("<name>" + key + "</name></types>", tmpDir, "package.xml");
+            });
+        ]]>
+    </scriptdef>
 
 </project>
