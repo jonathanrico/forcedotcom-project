@@ -13,7 +13,7 @@
     <!-- Set default value in property if not present -->
     <property name="checkOnly" value="true" />
     <property name="runAllTests" value="true" />
-    <property name="sf.package.apiVersion" value="33.0" />
+    <property name="sf.package.apiVersion" value="37.0" />
 
     <!-- Ant doesn't like < in replace tokens or values so set a property with < via cdata for reuse later -->
     <property name="lt"><![CDATA[<]]></property>
@@ -113,7 +113,7 @@
     </target>
 
     <!-- Deploy with destructive changes -->
-    <target name="deploy-with-destructive-changes" depends="proxy">>
+    <target name="deploy-with-destructive-changes" depends="proxy">
         <antcall target="deploy"/>
         <antcall target="deploy-destructive"/>
     </target>
