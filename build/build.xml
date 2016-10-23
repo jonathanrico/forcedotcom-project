@@ -95,8 +95,13 @@
         </xmltask> -->
     </target>
 
+    <!-- Print target information -->
+    <target name="printTargetInfo" >
+        <echo message="Target Org Username : ${sf.target.username}"/>
+    </target>
+
     <!-- Deploy the unpackaged set of metadata retrieved with retrieveUnpackaged -->
-    <target name="deploy" depends="runTargetValidations,updateMetadata,create-static-res,resolvePasswordForTargetEnv,proxy">
+    <target name="deploy" depends="printTargetInfo,runTargetValidations,updateMetadata,create-static-res,resolvePasswordForTargetEnv,proxy">
         <echo message="Deploying : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
         deployRoot="${src.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
@@ -105,7 +110,7 @@
     </target>
 
     <!-- Only Deploy destructive changes -->
-    <target name="deploy-destructive" depends="runTargetValidations,timestamp,resolvePasswordForTargetEnv">
+    <target name="deploy-destructive" depends="printTargetInfo,runTargetValidations,timestamp,resolvePasswordForTargetEnv">
         <echo message="Deploying Destructive : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${targetPassword}" serverurl="${sf.target.serverurl}"
         deployRoot="${destructive.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
@@ -248,7 +253,7 @@
     </target>
 
     <!-- Deploy metadata from the tmp directory -->
-    <target name="deploy-subset" depends="runTargetValidations,checkMetaHasPackageVersions,proxy">
+    <target name="deploy-subset" depends="printTargetInfo,runTargetValidations,checkMetaHasPackageVersions,proxy">
         <echo message="Subset Deployment : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
                 deployRoot="${app.deploy.tmp.dir}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="${runAllTests}">
@@ -308,13 +313,13 @@
     </target>
 
     <!-- Retrieve the contents listed in the file app/package.xml into the app directory -->
-    <target name="retrieve-unpackaged" depends="proxy">
+    <target name="retrieve-unpackaged" depends="printTargetInfo,proxy">
         <echo message="Retrieving Unpackaged : ${sf.target.username} ..."/>
         <sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${src.dir}/package.xml"/>
     </target>
 
     <!-- Retrieve metadata from the tmp directory -->
-    <target name="retrieve-unpackaged-subset" depends="proxy">
+    <target name="retrieve-unpackaged-subset" depends="printTargetInfo,proxy">
         <echo message="Retrieving Unpackaged Subset : ${sf.target.username} ..."/>
         <sf:retrieve username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" retrieveTarget="${src.dir}" unpackaged="${app.deploy.tmp.dir}/package.xml" />
     </target>
