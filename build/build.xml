@@ -102,11 +102,19 @@
 
     <!-- Deploy the unpackaged set of metadata retrieved with retrieveUnpackaged -->
     <target name="deploy" depends="printTargetInfo,runTargetValidations,updateMetadata,create-static-res,resolvePasswordForTargetEnv,proxy">
+        <echo message="Cleaning tmp dir ..."/>
+        <delete dir="${app.deploy.tmp.dir}"/>
+        <echo message="Copying src to tmp dir ..."/>
+        <copy todir="${app.deploy.tmp.dir}">
+            <fileset dir="${src.dir}" excludesfile="../.gitignore" />
+        </copy>
         <echo message="Deploying : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
-        deployRoot="${src.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
+        deployRoot="${app.deploy.tmp.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
         </sf:deploy>
         <antcall target="revertMetadataChanges"/>
+        <echo message="Cleaning tmp dir ..."/>
+        <delete dir="${app.deploy.tmp.dir}"/>
     </target>
 
     <!-- Only Deploy destructive changes -->
