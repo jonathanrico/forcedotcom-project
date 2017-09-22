@@ -1,12 +1,12 @@
 Sample App
 ===
 
-###Description
+## Description
 
 Project Description goes here..
 
 ---
-###Developers :
+## Developers
 
 #### How to use this template:
 
