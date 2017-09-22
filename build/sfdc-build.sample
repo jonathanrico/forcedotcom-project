@@ -8,3 +8,6 @@ sf.target.guestLicense = Guest
 sf.target.prodOrg.ids = 00DXXXXXXXXXXXXXXX|00DXXXXXXXXXXXXXXX
 checkOnly=false
 runAllTests=false
+
+# Disable the following line when testing in a non-https environment
+#protocol=http

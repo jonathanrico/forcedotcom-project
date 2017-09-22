@@ -1,5 +1,4 @@
-<project name="My App build file" default="deploy" basedir="." xmlns:sf="antlib:com.salesforce">
-
+<project name="sfbuild" default="deploy" basedir="." xmlns:sf="antlib:com.salesforce">
     <!-- Properties -->
     <property environment="env"/>
     <property name="build_props" value="sfdc-build.properties"/>
@@ -9,11 +8,12 @@
     <property name="staticres.src.dir" value="../static-resources"/>
     <property name="app.deploy.tmp.dir" value="../build/tmp/src"/>
     <property name="packageVersionTag" value="&lt;packageVersions&gt;"/>
+    <property name="protocol" value="https"/>
 
     <!-- Set default value in property if not present -->
     <property name="checkOnly" value="true" />
     <property name="runAllTests" value="true" />
-    <property name="sf.package.apiVersion" value="37.0" />
+    <property name="sf.package.apiVersion" value="40.0" />
 
     <!-- Ant doesn't like < in replace tokens or values so set a property with < via cdata for reuse later -->
     <property name="lt"><![CDATA[<]]></property>
@@ -286,7 +286,7 @@
         <if>
             <isset property="sf.target.prodOrg.ids"/>
             <then>
-                <executeSOQLSingle username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}">Select Id from Organization</executeSOQLSingle>
+                <executeSOQLSingle username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}" protocol="${protocol}">Select Id from Organization</executeSOQLSingle>
                 <echo message="Target Org Id : ${soqlRecord.Id}"/>
                 <condition property="is-prod-org">
                     <matches pattern="(${sf.target.prodOrg.ids})" string="${soqlRecord.Id}"/>

@@ -81,6 +81,23 @@
         <members>OBJECT__NAME__C</members>
         <name>Workflow</name>
     </types>
+    <types>
+        <members>ASSET_NAME</members>
+        <name>ContentAsset</name>
+    </types>
+    <types>
+        <members>CORS_SETTING_NAME</members>
+        <members>vPods</members>
+        <name>CorsWhitelistOrigin</name>
+    </types>
+    <types>
+        <members>FLEXI_PAGE_NAME</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <members>REMOTE_SITE_NAME</members>
+        <name>RemoteSiteSetting</name>
+    </types>
     -->
-    <version>37.0</version>
+    <version>40.0</version>
 </Package>

@@ -20,5 +20,5 @@
         <members>Sample_Object__c.Sample Workflow</members>
         <name>WorkflowRule</name>
     </types>
-    <version>37.0</version>
+    <version>40.0</version>
 </Package>
