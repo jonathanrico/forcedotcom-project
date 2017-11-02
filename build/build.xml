@@ -34,11 +34,9 @@
         <fileset id="meta.file" dir="${src.dir}" includes="**/*meta.xml">
             <contains text="${packageVersionTag}"/>
         </fileset>
-        <fail message="meta files contain '${packageVersionTag}' tag! Please remove before build">
-            <condition>
-                <resourcecount when="greater" count="0" refid="meta.file" />
-            </condition>
-        </fail>
+        <replaceregexp flags="g" match="\s*\&lt;packageVersions\&gt;[\s\S]*\&lt;\/packageVersions\&gt;" replace="">
+            <fileset refid="meta.file"/>
+        </replaceregexp>
     </target>
 
     <!-- Resolves password for target environment.  Read from properties file, if it's not available read it from prompt -->
@@ -110,7 +108,7 @@
         </copy>
         <echo message="Deploying : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
-        deployRoot="${app.deploy.tmp.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
+        deployRoot="${app.deploy.tmp.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="2000"  maxPoll="500" runAllTests="false">
         </sf:deploy>
         <antcall target="revertMetadataChanges"/>
         <echo message="Cleaning tmp dir ..."/>
@@ -121,7 +119,7 @@
     <target name="deploy-destructive" depends="printTargetInfo,runTargetValidations,timestamp,resolvePasswordForTargetEnv">
         <echo message="Deploying Destructive : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${targetPassword}" serverurl="${sf.target.serverurl}"
-        deployRoot="${destructive.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="false">
+        deployRoot="${destructive.dir}" checkOnly="${checkOnly}" logType="Debugonly" pollWaitMillis="2000"  maxPoll="500" runAllTests="false">
         </sf:deploy>
     </target>
 
@@ -264,7 +262,7 @@
     <target name="deploy-subset" depends="printTargetInfo,runTargetValidations,checkMetaHasPackageVersions,proxy">
         <echo message="Subset Deployment : ${sf.target.username} ..."/>
         <sf:deploy username="${sf.target.username}" password="${sf.target.password}" serverurl="${sf.target.serverurl}"
-                deployRoot="${app.deploy.tmp.dir}" logType="Debugonly" pollWaitMillis="20000"  maxPoll="50" runAllTests="${runAllTests}">
+                deployRoot="${app.deploy.tmp.dir}" logType="Debugonly" pollWaitMillis="2000"  maxPoll="500" runAllTests="${runAllTests}">
         </sf:deploy>
     </target>
 
