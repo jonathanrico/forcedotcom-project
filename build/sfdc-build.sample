@@ -1,13 +1,4 @@
-# local-build.properties
-# Specify the login credentials for the desired Salesforce organization
-sf.target.username =
-sf.target.password =
-sf.target.serverurl = https://login.salesforce.com
-sf.target.guestLicense = Guest
-# Use 18 char ids
-sf.target.prodOrg.ids = 00DXXXXXXXXXXXXXXX|00DXXXXXXXXXXXXXXX
-checkOnly=false
-runAllTests=false
-
-# Disable the following line when testing in a non-https environment
-#protocol=http
+# Please, update your sf-tools!
+# Be prepared: from this moment all your credentials should be placed in sf-tools.properties.json
+# Now sfdc-build.properties file will be generated automatically from sf-tools.properties.json
+# Copy and rename "sf-tools.properties.json.sample" to "sf-tools.properties.json" with your credentials
