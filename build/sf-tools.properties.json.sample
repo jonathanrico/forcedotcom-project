@@ -1,0 +1,14 @@
+{
+    "credentials" : [
+        {
+            "username" : "please set your credentials in sf-tools.properties.json",
+            "password" : "",
+            "serverurl" : "https://login.salesforce.com",
+            "active" : true
+        }
+    ],
+    "deploySettings" : {
+        "checkOnly" : false,
+        "runAllTests" : false
+    }
+}
