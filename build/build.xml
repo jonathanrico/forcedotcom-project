@@ -13,7 +13,7 @@
     <!-- Set default value in property if not present -->
     <property name="checkOnly" value="true" />
     <property name="runAllTests" value="true" />
-    <property name="sf.package.apiVersion" value="40.0" />
+    <property name="sf.package.apiVersion" value="45.0" />
 
     <!-- Ant doesn't like < in replace tokens or values so set a property with < via cdata for reuse later -->
     <property name="lt"><![CDATA[<]]></property>
@@ -187,14 +187,26 @@
                                 <echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.subFolderName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
                             </then>
                             <else>
-                                <echo message="Processing sub-folders..."/>
-                                <copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}">
-                                    <fileset dir="${src.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}" >
-                                        <include name="${deploy.single.fileName}.*" />
-                                        <include name="${deploy.single.fileName}.*-meta.xml" />
-                                    </fileset>
-                                </copy>
-                                <echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.subFolderName}</members><members>${deploy.single.subFolderName}/${deploy.single.fileName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
+                                <if>
+                                  <equals arg1="${deploy.single.metadataType}" arg2="LightningComponentBundle"/>
+                                  <then>
+                                      <echo message="Processing lwc bundle..."/>
+                                      <copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}">
+                                          <fileset dir="${src.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}"/>
+                                      </copy>
+                                      <echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.subFolderName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
+                                  </then>
+                                  <else>
+                                    <echo message="Processing sub-folders..."/>
+                                    <copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}">
+                                        <fileset dir="${src.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}" >
+                                            <include name="${deploy.single.fileName}.*" />
+                                            <include name="${deploy.single.fileName}.*-meta.xml" />
+                                        </fileset>
+                                    </copy>
+                                    <echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${deploy.single.subFolderName}</members><members>${deploy.single.subFolderName}/${deploy.single.fileName}</members><name>${deploy.single.metadataType}</name></types>]]></echo>
+                                  </else>
+                                </if>
                             </else>
                         </if>
                     </then>
@@ -227,8 +239,17 @@
                                 <echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${retrieve.single.subFolderName}</members><name>${retrieve.single.metadataType}</name></types>]]></echo>
                             </then>
                             <else>
-                                <echo message="Processing sub-folders..."/>
-                                <echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${retrieve.single.subFolderName}</members><members>${retrieve.single.subFolderName}/${retrieve.single.fileName}</members><name>${retrieve.single.metadataType}</name></types>]]></echo>
+                              <if>
+                                  <equals arg1="${retrieve.single.metadataType}" arg2="LightningComponentBundle"/>
+                                  <then>
+                                      <echo message="Processing lwc bundle..."/>
+                                      <echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${retrieve.single.subFolderName}</members><name>${retrieve.single.metadataType}</name></types>]]></echo>
+                                  </then>
+                                  <else>
+                                      <echo message="Processing sub-folders..."/>
+                                      <echo file="${app.deploy.tmp.dir}/package.xml" append="true"><![CDATA[<types><members>${retrieve.single.subFolderName}</members><members>${retrieve.single.subFolderName}/${retrieve.single.fileName}</members><name>${retrieve.single.metadataType}</name></types>]]></echo>
+                                  </else>
+                              </if>
                             </else>
                         </if>
                     </then>
@@ -407,7 +428,7 @@
                         );
                     });
                 } else {
-                    if (mainDir == "aura") {
+                    if (mainDir == "aura" || mainDir == "lwc") {
                         taskEcho("Perform bundle files for " + mainDir + " / " + item);
                         copyToDir(srcDir + "/" + mainDir + "/" + item, tmpDir + "/" + mainDir + "/" + item);
                     } else {
