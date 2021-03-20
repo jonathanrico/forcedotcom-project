@@ -10,6 +10,10 @@
     </types>
     <types>
         <members>*</members>
+        <name>ApexTestSuite</name>
+    </types>
+    <types>
+        <members>*</members>
         <name>ApexPage</name>
     </types>
     <types>
@@ -43,6 +47,10 @@
     <types>
     <members>*</members>
         <name>Layout</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>LightningComponentBundle</name>
     </types>
     <types>
         <members>*</members>
@@ -99,5 +107,5 @@
         <name>RemoteSiteSetting</name>
     </types>
     -->
-    <version>43.0</version>
+    <version>51.0</version>
 </Package>
