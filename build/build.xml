@@ -180,9 +180,12 @@
                     <isset property="deploy.single.subFolderName"/>
                     <then>
                         <if>
-                            <equals arg1="${deploy.single.metadataType}" arg2="AuraDefinitionBundle"/>
+                            <or>
+                                <equals arg1="${deploy.single.metadataType}" arg2="AuraDefinitionBundle"/>
+                                <equals arg1="${deploy.single.metadataType}" arg2="LightningComponentBundle"/>
+                            </or>
                             <then>
-                                <echo message="Processing aura bundle..."/>
+                                <echo message="Processing aura/lwc bundle..."/>
                                 <copy todir="${app.deploy.tmp.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}">
                                     <fileset dir="${src.dir}/${deploy.single.folderName}/${deploy.single.subFolderName}"/>
                                 </copy>
