@@ -23,7 +23,7 @@ Project Description goes here..
 
 0. Make sure ant is installed in your local box
 1. Navigate to the build folder : `cd build`
-2. Clone the `sfdc-build.sample` file and re-name it to `sfdc-build.properties`
+2. Rename the `sfdc-build.properties.example` file to `sfdc-build.properties`
 3. Update your `sfdc-build.properties` with your credentials and endpoint.
 
    **If you're deploying against a non-https environment, make sure you un-comment `protocol=http` line in the properties file**
